@@ -1,5 +1,6 @@
 # models/neural_network.py
 import math
+import random
 
 class NeuralNetwork:
     def __init__(self, input_size, hidden_size, output_size, learning_rate=0.01, iterations=1000):
@@ -17,10 +18,10 @@ class NeuralNetwork:
     def sigmoid_derivative(self, x):
         return x * (1 - x)
 
-    def fit(self, X, y):
+    def fit(self, x, y):
         for _ in range(self.iterations):
-            for i in range(len(X)):
-                hidden_layer_input = [sum(X[i][j] * self.weights_input_hidden[j][k] for j in range(self.input_size)) for k in range(self.hidden_size)]
+            for i in range(len(x)):
+                hidden_layer_input = [sum(x[i][j] * self.weights_input_hidden[j][k] for j in range(self.input_size)) for k in range(self.hidden_size)]
                 hidden_layer_output = [self.sigmoid(x) for x in hidden_layer_input]
                 output_layer_input = sum(hidden_layer_output[k] * self.weights_hidden_output[k] for k in range(self.hidden_size))
                 output = self.sigmoid(output_layer_input)
@@ -35,10 +36,10 @@ class NeuralNetwork:
                     self.weights_hidden_output[k] += self.learning_rate * output_delta * hidden_layer_output[k]
                 for j in range(self.input_size):
                     for k in range(self.hidden_size):
-                        self.weights_input_hidden[j][k] += self.learning_rate * hidden_delta[k] * X[i][j]
+                        self.weights_input_hidden[j][k] += self.learning_rate * hidden_delta[k] * x[i][j]
 
-    def predict(self, X):
-        hidden_layer_input = [sum(X[j] * self.weights_input_hidden[j][k] for j in range(self.input_size)) for k in range(self.hidden_size)]
+    def predict(self, x):
+        hidden_layer_input = [sum(x[j] * self.weights_input_hidden[j][k] for j in range(self.input_size)) for k in range(self.hidden_size)]
         hidden_layer_output = [self.sigmoid(x) for x in hidden_layer_input]
         output_layer_input = sum(hidden_layer_output[k] * self.weights_hidden_output[k] for k in range(self.hidden_size))
         return self.sigmoid(output_layer_input)
