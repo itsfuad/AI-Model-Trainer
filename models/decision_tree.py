@@ -1,4 +1,6 @@
 # models/decision_tree.py
+import numpy as np
+
 class Node:
     def __init__(self, gini, num_samples, num_samples_per_class, predicted_class):
         self.gini = gini
@@ -18,7 +20,7 @@ class DecisionTree:
         m = len(y)
         return 1.0 - sum((np.sum(y == c) / m) ** 2 for c in np.unique(y))
 
-    def _grow_tree(self, X, y, depth=0):
+    def _grow_tree(self, x, y, depth=0):
         num_samples_per_class = [np.sum(y == i) for i in range(self.num_classes)]
         predicted_class = np.argmax(num_samples_per_class)
         node = Node(
@@ -29,19 +31,19 @@ class DecisionTree:
         )
 
         if depth < self.max_depth:
-            idx, thr = self._best_split(X, y)
+            idx, thr = self._best_split(x, y)
             if idx is not None:
-                indices_left = X[:, idx] < thr
-                X_left, y_left = X[indices_left], y[indices_left]
-                X_right, y_right = X[~indices_left], y[~indices_left]
+                indices_left = x[:, idx] < thr
+                x_left, y_left = x[indices_left], y[indices_left]
+                x_right, y_right = x[~indices_left], y[~indices_left]
                 node.feature_index = idx
                 node.threshold = thr
-                node.left = self._grow_tree(X_left, y_left, depth + 1)
-                node.right = self._grow_tree(X_right, y_right, depth + 1)
+                node.left = self._grow_tree(x_left, y_left, depth + 1)
+                node.right = self._grow_tree(x_right, y_right, depth + 1)
         return node
 
-    def _best_split(self, X, y):
-        m, n = X.shape
+    def _best_split(self, x, y):
+        m, n = x.shape
         if m <= 1:
             return None, None
 
@@ -50,7 +52,7 @@ class DecisionTree:
         best_idx, best_thr = None, None
 
         for idx in range(n):
-            thresholds, classes = zip(*sorted(zip(X[:, idx], y)))
+            thresholds, classes = zip(*sorted(zip(x[:, idx], y)))
             num_left = [0] * self.num_classes
             num_right = num_parent.copy()
             for i in range(1, m):
@@ -68,9 +70,9 @@ class DecisionTree:
                     best_thr = (thresholds[i] + thresholds[i - 1]) / 2
         return best_idx, best_thr
 
-    def fit(self, X, y):
+    def fit(self, x, y):
         self.num_classes = len(set(y))
-        self.tree = self._grow_tree(X, y)
+        self.tree = self._grow_tree(x, y)
 
     def _predict(self, inputs):
         node = self.tree
@@ -81,5 +83,5 @@ class DecisionTree:
                 node = node.right
         return node.predicted_class
 
-    def predict(self, X):
-        return [self._predict(inputs) for inputs in X]
+    def predict(self, x):
+        return [self._predict(inputs) for inputs in x]
