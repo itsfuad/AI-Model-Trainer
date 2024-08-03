@@ -10,7 +10,7 @@ def load_data(file_path):
             data.append([float(x) for x in row])
     return header, data
 
-def split_data(data, train_ratio=0.8):
+def split_data(data, train_ratio=0.9):
     train_size = int(len(data) * train_ratio)
     train_data = data[:train_size]
     test_data = data[train_size:]
