@@ -4,6 +4,7 @@
 This project is an AI Trainer that builds, trains, and evaluates machine learning models from scratch without using third-party libraries.
 
 ## Project structure
+```
 ai_trainer/
 ├── data/
 │   ├── dataset.csv
@@ -28,7 +29,7 @@ ai_trainer/
 │   ├── train_svm.py
 │   └── compare_models.py
 └── README.md
-
+```
 
 ## Usage
 1. Place your dataset in the `data/` directory as `dataset.csv`.
